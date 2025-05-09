@@ -1,0 +1,41 @@
+{
+  description = "dmenu-5.3";
+
+  inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+
+  outputs =
+    { self, nixpkgs }:
+    {
+      defaultPackage.x86_64-linux =
+        with import nixpkgs { system = "x86_64-linux"; };
+        stdenv.mkDerivation {
+          name = "dmenu";
+          version = "5.3";
+
+          src = self;
+
+          nativeBuildInputs = with pkgs; [ pkg-config ];
+          buildInputs = with pkgs; [
+            fontconfig
+            xorg.libX11
+            xorg.libXinerama
+            zlib
+            xorg.libXft
+          ];
+
+          preConfigure = ''
+            makeFlagsArray+=(
+              PREFIX="$out"
+              CC="$CC"
+              # default config.mk hardcodes dependent libraries and include paths
+              INCS="`$PKG_CONFIG --cflags fontconfig x11 xft xinerama`"
+              LIBS="`$PKG_CONFIG --libs   fontconfig x11 xft xinerama`"
+            )
+          '';
+
+          meta = {
+            mainProgram = "dmenu";
+          };
+        };
+    };
+}
