@@ -1,5 +1,5 @@
 {
-  description = "dmenu-5.3";
+  description = "dmenu";
 
   inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
@@ -31,6 +31,11 @@
               INCS="`$PKG_CONFIG --cflags fontconfig x11 xft xinerama`"
               LIBS="`$PKG_CONFIG --libs   fontconfig x11 xft xinerama`"
             )
+          '';
+
+          postPatch = ''
+            sed -ri -e 's!\<(dmenu|dmenu_path|stest)\>!'"$out/bin"'/&!g' dmenu_run
+            sed -ri -e 's!\<stest\>!'"$out/bin"'/&!g' dmenu_path
           '';
 
           meta = {
