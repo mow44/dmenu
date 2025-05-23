@@ -5,6 +5,13 @@
 
   outputs =
     { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      configFile = import ./config.nix {
+        inherit pkgs;
+      };
+    in
     {
       defaultPackage.x86_64-linux =
         with import nixpkgs { system = "x86_64-linux"; };
@@ -31,6 +38,10 @@
               INCS="`$PKG_CONFIG --cflags fontconfig x11 xft xinerama`"
               LIBS="`$PKG_CONFIG --libs   fontconfig x11 xft xinerama`"
             )
+          '';
+
+          prePatch = ''
+            cp ${configFile} config.def.h
           '';
 
           postPatch = ''
