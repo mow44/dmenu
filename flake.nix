@@ -13,8 +13,8 @@
       };
     in
     {
-      defaultPackage.x86_64-linux =
-        with import nixpkgs { system = "x86_64-linux"; };
+      defaultPackage.${system} =
+        with pkgs;
         stdenv.mkDerivation {
           name = "dmenu";
           version = "5.3";
